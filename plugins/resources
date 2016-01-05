@@ -1,5 +1,6 @@
 #!/bin/bash
 
-
 /opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --disk-space-util --disk-path=/
 aws cloudwatch put-metric-data --dimensions InstanceId=$INSTANCE --metric-name Load --namespace System/Linux --value $(cat /proc/loadavg  | awk '{print$1}')
+aws cloudwatch put-metric-data --metric-name SSH --namespace Processes --dimensions InstanceId=$INSTANCE --value $(ps aux | grep -c "/usr/sbin/ssh[d]")
+aws cloudwatch put-metric-data --metric-name IOWait --namespace System/Linux --dimensions InstanceId=$INSTANCE --value $(iostat 1 2 | grep -A1 avg-cpu | tail -1 | awk '{print$4}') --unit Percent

@@ -16,6 +16,6 @@ do
 	plugin=$(echo $line | awk -F/ '{print$5}' | awk -F'.' '{print$1}')
 	if [[ $(eval "echo \$$plugin") -eq 1 ]]
 	then
-		echo $line
+		source $line
 	fi
 done
