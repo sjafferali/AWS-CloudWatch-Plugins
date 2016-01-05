@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+/opt/aws-scripts-mon/mon-put-instance-data.pl --mem-util --disk-space-util --disk-path=/
+aws cloudwatch put-metric-data --dimensions InstanceId=$INSTANCE --metric-name Load --namespace System/Linux --value $(cat /proc/loadavg  | awk '{print$1}')

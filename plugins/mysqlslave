@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+aws cloudwatch put-metric-data --metric-name ReplicationLag --namespace MySQL --dimensions InstanceId=$INSTANCE --value $(mysql -e "show slave status\G" | grep Seconds | awk '{print$2}')

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+aws cloudwatch put-metric-data --metric-name Connections --namespace Redis --dimensions InstanceId=$INSTANCE --value $(redis-cli info | grep connected_clients | awk -F: '{print$2}')
+aws cloudwatch put-metric-data --metric-name Redis --dimensions InstanceId=$INSTANCE  --namespace Processes --value $(ps aux | grep -c redi[s])
