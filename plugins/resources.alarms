@@ -21,3 +21,8 @@ aws cloudwatch put-metric-alarm --alarm-name SSHProcesses-$(uname -n) --alarm-de
 
 ### IOWAIT ALARM
 aws cloudwatch put-metric-alarm --alarm-name IOWait-$(uname -n) --alarm-description "Alarm when iowait exceeds 35%" --metric-name IOWait  --namespace System/Linux --statistic Average --period 300 --threshold 35 --comparison-operator GreaterThanThreshold --dimensions  Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions arn:aws:sns:us-west-2:776035308060:Monitoring_Alerts --unit Percent
+
+### STATUS ALARM
+aws cloudwatch put-metric-alarm --alarm-name StatusCheckFailed_Instance-$(uname -n) --metric-name StatusCheckFailed_Instance --namespace AWS/EC2 --statistic Maximum --dimensions Name=InstanceId,Value=$INSTANCE --unit Count --period 300 --evaluation-periods 2 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --alarm-actions arn:aws:sns:us-west-2:776035308060:Monitoring_Alerts
+
+aws cloudwatch put-metric-alarm --alarm-name StatusCheckFailed_System-$(uname -n) --metric-name StatusCheckFailed_System --namespace AWS/EC2 --statistic Maximum --dimensions Name=InstanceId,Value=$INSTANCE --unit Count --period 300 --evaluation-periods 2 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --alarm-actions arn:aws:sns:us-west-2:776035308060:Monitoring_Alerts
