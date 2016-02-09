@@ -1,0 +1,13 @@
+[Unit]
+Description=AWS Alarms
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=simple
+RemainAfterExit=true
+ExecStart=/opt/aws-scripts-mon/cron/alarms.sh
+ExecStop=/opt/aws-scripts-mon/removealarms.sh
+
+[Install]
+WantedBy=multi-user.target
