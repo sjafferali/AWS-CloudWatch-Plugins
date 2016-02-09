@@ -1,9 +1,26 @@
 #!/bin/bash
 
 source /opt/aws-scripts-mon/cron/.config
-
 rm -fr /var/tmp/aws-mon
-sleep 90
+sleep 60
+ec2_host=$(aws ec2 describe-tags --filter "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"  "Name=key,Values=Name" | grep Value | awk -F'"' '{print$4}')
+current_host=$(uname -n)
+
+if [[ -z $ec2_host ]]
+then
+	exit 1
+fi
+
+if [[ $ec2_host != $current_host ]]
+then
+	hostnamectl set-hostname $ec2_host
+fi
+
+/opt/aws-scripts-mon/removealarms.sh
+echo '#!/bin/bash' > /opt/aws-scripts-mon/removealarms.sh
+
+HOST_NAME=$(uname -n)
+
 if [[ -f /var/tmp/aws-mon/instance-id ]]
 then
 	INSTANCE=$(cat /var/tmp/aws-mon/instance-id)
@@ -19,3 +36,5 @@ do
 		source $line
 	fi
 done
+
+echo '> /opt/aws-scripts-mon/removealarms.sh' >> /opt/aws-scripts-mon/removealarms.sh
