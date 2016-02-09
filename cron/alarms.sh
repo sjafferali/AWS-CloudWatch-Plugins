@@ -4,6 +4,12 @@ source /opt/aws-scripts-mon/cron/.config
 rm -fr /var/tmp/aws-mon
 sleep 60
 ec2_host=$(aws ec2 describe-tags --filter "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"  "Name=key,Values=Name" | grep Value | awk -F'"' '{print$4}')
+if [[ ! -z $(echo $ec2_host | grep RAND) ]]
+then
+	GEN_NUM=$(echo $[ 1 + $[ RANDOM % 100 ]])
+	ec2_host=$(echo $ec2_host | sed "s/RAND/$GEN_NUM/")
+	aws ec2 create-tags --resources $(curl -s http://169.254.169.254/latest/meta-data/instance-id) --tags Key=Name,Value=$ec2_host
+fi
 current_host=$(uname -n)
 
 if [[ -z $ec2_host ]]
