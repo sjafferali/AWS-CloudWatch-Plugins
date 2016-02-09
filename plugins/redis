@@ -1,5 +1,10 @@
 #!/bin/bash
 
-
-aws cloudwatch put-metric-data --metric-name Connections --namespace Redis --dimensions InstanceId=$INSTANCE --value $(redis-cli info | grep connected_clients | awk -F: '{print$2}')
+REDIS_PASS=$(egrep ^requirepass /etc/redis.conf | awk '{print$2}')
+if [[ -z $REDIS_PASS ]]
+then
+	aws cloudwatch put-metric-data --metric-name Connections --namespace Redis --dimensions InstanceId=$INSTANCE --value $(redis-cli info | grep connected_clients | awk -F: '{print$2}')
+else
+        aws cloudwatch put-metric-data --metric-name Connections --namespace Redis --dimensions InstanceId=$INSTANCE --value $(redis-cli -a $REDIS_PASS info | grep connected_clients | awk -F: '{print$2}')
+fi
 aws cloudwatch put-metric-data --metric-name Redis --dimensions InstanceId=$INSTANCE  --namespace Processes --value $(ps aux | grep -c redi[s])
