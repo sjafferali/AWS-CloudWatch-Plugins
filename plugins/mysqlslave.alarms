@@ -1,4 +1,7 @@
 #!/bin/bash
 
 ### MYSQL SLAVE ALARMS
-aws cloudwatch put-metric-alarm --alarm-name MySQLReplicationLag-$(uname -n) --alarm-description "Alarm when replication lag connections exceeds 150" --metric-name ReplicationLag --namespace MySQL --statistic Average --period 300 --threshold 150 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions arn:aws:sns:us-west-2:776035308060:Monitoring_Alerts
+aws cloudwatch put-metric-alarm --alarm-name MySQLReplicationLag-$HOST_NAME --alarm-description "Alarm when replication lag connections exceeds 150" --metric-name ReplicationLag --namespace MySQL --statistic Average --period 300 --threshold 150 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions $sns_topic
+
+
+echo "aws cloudwatch delete-alarms --alarm-names MySQLReplicationLag-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
