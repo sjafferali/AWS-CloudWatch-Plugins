@@ -2,3 +2,21 @@
 
 
 aws cloudwatch put-metric-data --metric-name ReplicationLag --namespace MySQL --dimensions InstanceId=$INSTANCE --value $(mysql -e "show slave status\G" | grep Seconds | awk '{print$2}')
+if [[ $(mysql -e "show slave status\G" | grep Last_SQL_Errno | awk '{print$2}') -eq 0 ]]
+then
+	aws cloudwatch put-metric-data --metric-name ReplicationError --namespace MySQL --dimensions InstanceId=$INSTANCE --value 0
+else
+	aws cloudwatch put-metric-data --metric-name ReplicationError --namespace MySQL --dimensions InstanceId=$INSTANCE --value 1
+fi
+if [[ $(mysql -e "show slave status\G" | grep Slave_SQL_Running | awk '{print$2}') == "Yes" ]]
+then
+	aws cloudwatch put-metric-data --metric-name Slave_SQL_Running --namespace MySQL --dimensions InstanceId=$INSTANCE --value 1
+else
+	aws cloudwatch put-metric-data --metric-name Slave_SQL_Running --namespace MySQL --dimensions InstanceId=$INSTANCE --value 0
+fi
+if [[ $(mysql -e "show slave status\G" | grep Slave_IO_Running | awk '{print$2}') == "Yes" ]]
+then
+	aws cloudwatch put-metric-data --metric-name Slave_IO_Running --namespace MySQL --dimensions InstanceId=$INSTANCE --value 1
+else
+	aws cloudwatch put-metric-data --metric-name Slave_IO_Running --namespace MySQL --dimensions InstanceId=$INSTANCE --value 0
+fi
