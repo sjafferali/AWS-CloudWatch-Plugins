@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [[ -z $(crm_mon --simple-status | grep WARN) ]]
+then
+	aws cloudwatch put-metric-data --metric-name ClusterStatus --namespace HCluster --dimensions InstanceId=$INSTANCE --value 0
+else
+	aws cloudwatch put-metric-data --metric-name ClusterStatus --namespace HCluster --dimensions InstanceId=$INSTANCE --value 1
+fi
+
+aws cloudwatch put-metric-data --metric-name ClusterFailures --namespace HCluster --dimensions InstanceId=$INSTANCE --value $(crm_mon -1 | egrep -c "^\*")
+
+if [[ -z $(crm_mon -1 | grep OFFLINE) ]]
+then
+        aws cloudwatch put-metric-data --metric-name OfflineNodes --namespace HCluster --dimensions InstanceId=$INSTANCE --value 0
+else
+        aws cloudwatch put-metric-data --metric-name OfflineNodes --namespace HCluster --dimensions InstanceId=$INSTANCE --value 1
+fi
+
+aws cloudwatch put-metric-data --metric-name Corosync --dimensions InstanceId=$INSTANCE --namespace Processes --value $(ps aux | grep -c [c]orosync)
+aws cloudwatch put-metric-data --metric-name Pacemaker --dimensions InstanceId=$INSTANCE --namespace Processes --value $(ps aux | grep -c [p]acemakerd)
+aws cloudwatch put-metric-data --metric-name PCSD --dimensions InstanceId=$INSTANCE --namespace Processes --value $(ps aux | grep pcs[d])
