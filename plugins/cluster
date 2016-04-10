@@ -18,4 +18,4 @@ fi
 
 aws cloudwatch put-metric-data --metric-name Corosync --dimensions InstanceId=$INSTANCE --namespace Processes --value $(ps aux | grep -c [c]orosync)
 aws cloudwatch put-metric-data --metric-name Pacemaker --dimensions InstanceId=$INSTANCE --namespace Processes --value $(ps aux | grep -c [p]acemakerd)
-aws cloudwatch put-metric-data --metric-name PCSD --dimensions InstanceId=$INSTANCE --namespace Processes --value $(ps aux | grep pcs[d])
+aws cloudwatch put-metric-data --metric-name PCSD --dimensions InstanceId=$INSTANCE --namespace Processes --value $(ps aux | grep -c pcs[d])
