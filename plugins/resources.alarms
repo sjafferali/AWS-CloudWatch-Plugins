@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NUM_CORES=$(($(cat /proc/cpuinfo | grep -c processor)*2))
+NUM_CORES=$(($(cat /proc/cpuinfo | grep -c processor)*4))
 
 ### RAM ALARM
 aws cloudwatch put-metric-alarm --alarm-name RAM-$HOST_NAME --alarm-description "Alarm when RAM exceeds 90%" --metric-name MemoryUtilization --namespace System/Linux --statistic Average --period 300 --threshold 90 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions $sns_topic --unit Percent
