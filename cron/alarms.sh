@@ -45,6 +45,7 @@ then
 else
 	INSTANCE=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 fi
+echo "aws ec2 create-tags --resources $INSTANCE --tags Key=Name,Value=DELETED" >> /opt/aws-scripts-mon/removealarms.sh
 
 find /opt/aws-scripts-mon/plugins/ -type f -name \*.alarms | while read line
 do
