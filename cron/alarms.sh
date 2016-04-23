@@ -4,6 +4,8 @@ source /opt/aws-scripts-mon/cron/.config
 rm -fr /var/tmp/aws-mon
 sleep 60
 ec2_host=$(aws ec2 describe-tags --filter "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"  "Name=key,Values=Name" | grep Value | awk -F'"' '{print$4}')
+ec2_host_orig=$ec2_host
+current_host=$(uname -n)
 if [[ ! -z $(echo $ec2_host | grep RAND) ]]
 then
         type_tag=$(aws ec2 describe-tags --filter "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"  "Name=key,Values=Type"  | awk -F'"' '/Value/ {print$4}')
@@ -45,7 +47,7 @@ then
 else
 	INSTANCE=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 fi
-echo "aws ec2 create-tags --resources $INSTANCE --tags Key=Name,Value=DELETED" >> /opt/aws-scripts-mon/removealarms.sh
+echo "aws ec2 create-tags --resources $INSTANCE --tags Key=Name,Value=$ec2_host_orig" >> /opt/aws-scripts-mon/removealarms.sh
 
 find /opt/aws-scripts-mon/plugins/ -type f -name \*.alarms | while read line
 do
