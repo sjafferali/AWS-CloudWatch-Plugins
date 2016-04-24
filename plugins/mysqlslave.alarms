@@ -1,13 +1,13 @@
 #!/bin/bash
 
 ### MYSQL SLAVE ALARMS
-aws cloudwatch put-metric-alarm --alarm-name MySQLReplicationLag-$HOST_NAME --alarm-description "Alarm when replication lag connections exceeds 150" --metric-name ReplicationLag --namespace MySQL --statistic Average --period 300 --threshold 150 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name MySQLReplicationLag-$HOST_NAME --alarm-description "Alarm when replication lag connections exceeds 150" --metric-name ReplicationLag --namespace MySQL --statistic Average --period 60 --threshold 150 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 10 --alarm-actions $sns_topic
 
-aws cloudwatch put-metric-alarm --alarm-name ReplicationError-$HOST_NAME --metric-name ReplicationError --namespace MySQL --statistic Average --dimensions Name=InstanceId,Value=$INSTANCE --period 300 --evaluation-periods 2 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name ReplicationError-$HOST_NAME --metric-name ReplicationError --namespace MySQL --statistic Average --dimensions Name=InstanceId,Value=$INSTANCE --period 60 --evaluation-periods 10 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --alarm-actions $sns_topic
 
-aws cloudwatch put-metric-alarm --alarm-name Slave_SQL_Running-$HOST_NAME --metric-name Slave_SQL_Running --namespace MySQL --statistic Average --dimensions Name=InstanceId,Value=$INSTANCE --period 300 --evaluation-periods 2 --threshold 1 --comparison-operator LessThanThreshold --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name Slave_SQL_Running-$HOST_NAME --metric-name Slave_SQL_Running --namespace MySQL --statistic Average --dimensions Name=InstanceId,Value=$INSTANCE --period 60 --evaluation-periods 10 --threshold 1 --comparison-operator LessThanThreshold --alarm-actions $sns_topic
 
-aws cloudwatch put-metric-alarm --alarm-name Slave_IO_Running-$HOST_NAME --metric-name Slave_IO_Running --namespace MySQL --statistic Average --dimensions Name=InstanceId,Value=$INSTANCE --period 300 --evaluation-periods 2 --threshold 1 --comparison-operator LessThanThreshold --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name Slave_IO_Running-$HOST_NAME --metric-name Slave_IO_Running --namespace MySQL --statistic Average --dimensions Name=InstanceId,Value=$INSTANCE --period 60 --evaluation-periods 10 --threshold 1 --comparison-operator LessThanThreshold --alarm-actions $sns_topic
 
 
 echo "aws cloudwatch delete-alarms --alarm-names MySQLReplicationLag-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh

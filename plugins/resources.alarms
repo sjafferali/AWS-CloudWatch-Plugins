@@ -3,28 +3,26 @@
 NUM_CORES=$(($(cat /proc/cpuinfo | grep -c processor)*4))
 
 ### RAM ALARM
-aws cloudwatch put-metric-alarm --alarm-name RAM-$HOST_NAME --alarm-description "Alarm when RAM exceeds 90%" --metric-name MemoryUtilization --namespace System/Linux --statistic Average --period 300 --threshold 90 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions $sns_topic --unit Percent
+aws cloudwatch put-metric-alarm --alarm-name RAM-$HOST_NAME --alarm-description "Alarm when RAM exceeds 90%" --metric-name MemoryUtilization --namespace System/Linux --statistic Average --period 60 --threshold 90 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 10 --alarm-actions $sns_topic --unit Percent
 
 ### DISK ALARM
 df -Ph | egrep "^/dev/" | grep -v "/san" | while read line
 do
-	aws cloudwatch put-metric-alarm --alarm-name Disk-$HOST_NAME-$(echo $line | awk '{print$6}') --alarm-description "Alarm when disk exceeds 80%" --metric-name DiskSpaceUtilization  --namespace System/Linux --statistic Average --period 300 --threshold 80 --comparison-operator GreaterThanThreshold --dimensions  Name=Filesystem,Value=$(echo $line | awk '{print$1}') Name=MountPath,Value=$(echo $line | awk '{print$6}') Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions $sns_topic --unit Percent
+	aws cloudwatch put-metric-alarm --alarm-name Disk-$HOST_NAME-$(echo $line | awk '{print$6}') --alarm-description "Alarm when disk exceeds 80%" --metric-name DiskSpaceUtilization  --namespace System/Linux --statistic Average --period 60 --threshold 80 --comparison-operator GreaterThanThreshold --dimensions  Name=Filesystem,Value=$(echo $line | awk '{print$1}') Name=MountPath,Value=$(echo $line | awk '{print$6}') Name=InstanceId,Value=$INSTANCE --evaluation-periods 20 --alarm-actions $sns_topic --unit Percent
 done
 ### CPU ALARM
-aws cloudwatch put-metric-alarm --alarm-name CPU-$HOST_NAME --alarm-description "Alarm when CPU exceeds 80%" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 300 --threshold 80 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE  --evaluation-periods 2 --alarm-actions $sns_topic --unit Percent
+aws cloudwatch put-metric-alarm --alarm-name CPU-$HOST_NAME --alarm-description "Alarm when CPU exceeds 80%" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 60 --threshold 80 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE  --evaluation-periods 10 --alarm-actions $sns_topic --unit Percent
 
 ### LOAD ALARM
-aws cloudwatch put-metric-alarm --alarm-name Load-$HOST_NAME --alarm-description "Alarm when load exceeds $NUM_CORES" --metric-name Load --namespace System/Linux --statistic Average --period 300 --threshold $NUM_CORES --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name Load-$HOST_NAME --alarm-description "Alarm when load exceeds $NUM_CORES" --metric-name Load --namespace System/Linux --statistic Average --period 60 --threshold $NUM_CORES --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 10 --alarm-actions $sns_topic
 
 ### IOWAIT ALARM
-aws cloudwatch put-metric-alarm --alarm-name IOWait-$HOST_NAME --alarm-description "Alarm when iowait exceeds 35%" --metric-name IOWait  --namespace System/Linux --statistic Average --period 300 --threshold 35 --comparison-operator GreaterThanThreshold --dimensions  Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions $sns_topic --unit Percent
+aws cloudwatch put-metric-alarm --alarm-name IOWait-$HOST_NAME --alarm-description "Alarm when iowait exceeds 35%" --metric-name IOWait  --namespace System/Linux --statistic Average --period 60 --threshold 35 --comparison-operator GreaterThanThreshold --dimensions  Name=InstanceId,Value=$INSTANCE --evaluation-periods 10 --alarm-actions $sns_topic --unit Percent
 
 ### STATUS ALARM
-aws cloudwatch put-metric-alarm --alarm-name StatusCheckFailed_Instance-$HOST_NAME --metric-name StatusCheckFailed_Instance --namespace AWS/EC2 --statistic Average --dimensions Name=InstanceId,Value=$INSTANCE --unit Count --period 300 --evaluation-periods 2 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name StatusCheckFailed_Instance-$HOST_NAME --metric-name StatusCheckFailed_Instance --namespace AWS/EC2 --statistic Average --dimensions Name=InstanceId,Value=$INSTANCE --unit Count --period 300 --evaluation-periods 4 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --alarm-actions $sns_topic
 
-aws cloudwatch put-metric-alarm --alarm-name StatusCheckFailed_System-$HOST_NAME --metric-name StatusCheckFailed_System --namespace AWS/EC2 --statistic Average --dimensions Name=InstanceId,Value=$INSTANCE --unit Count --period 300 --evaluation-periods 2 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --alarm-actions $sns_topic
-
-
+aws cloudwatch put-metric-alarm --alarm-name StatusCheckFailed_System-$HOST_NAME --metric-name StatusCheckFailed_System --namespace AWS/EC2 --statistic Average --dimensions Name=InstanceId,Value=$INSTANCE --unit Count --period 300 --evaluation-periods 4 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --alarm-actions $sns_topic
 
 
 echo "aws cloudwatch delete-alarms --alarm-names RAM-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh

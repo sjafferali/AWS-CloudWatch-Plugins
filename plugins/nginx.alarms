@@ -2,8 +2,8 @@
 
 
 ### NGINX ALARM
-aws cloudwatch put-metric-alarm --alarm-name NginxConnections-$HOST_NAME --alarm-description "Alarm when nginx connections exceeds 500" --metric-name Connections --namespace Nginx --statistic Average --period 300 --threshold 500 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions $sns_topic
-aws cloudwatch put-metric-alarm --alarm-name NginxProcesses-$HOST_NAME --alarm-description "Alarm when no nginx processes running" --metric-name Nginx --namespace Processes --statistic Average --period 300 --threshold 1 --comparison-operator LessThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 2 --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name NginxConnections-$HOST_NAME --alarm-description "Alarm when nginx connections exceeds 500" --metric-name Connections --namespace Nginx --statistic Average --period 60 --threshold 500 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 10 --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name NginxProcesses-$HOST_NAME --alarm-description "Alarm when no nginx processes running" --metric-name Nginx --namespace Processes --statistic Average --period 60 --threshold 1 --comparison-operator LessThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 10 --alarm-actions $sns_topic
 
 echo "aws cloudwatch delete-alarms --alarm-names NginxConnections-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
 echo "aws cloudwatch delete-alarms --alarm-names NginxProcesses-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
