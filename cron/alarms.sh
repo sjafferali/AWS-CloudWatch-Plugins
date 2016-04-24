@@ -58,4 +58,6 @@ do
 	fi
 done
 
+echo 'touch /opt/aws-scripts-mon/monitor.lockfile' >> /opt/aws-scripts-mon/removealarms.sh
 echo '> /opt/aws-scripts-mon/removealarms.sh' >> /opt/aws-scripts-mon/removealarms.sh
+rm -f /opt/aws-scripts-mon/monitor.lockfile

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [[ -f /opt/aws-scripts-mon/monitor.lockfile ]]
+then
+	exit 1
+fi
+
+
+
 source /opt/aws-scripts-mon/cron/.config
 if [[ -f /var/tmp/aws-mon/instance-id ]]
 then
