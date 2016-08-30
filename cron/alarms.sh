@@ -15,25 +15,30 @@ then
                 if [[ -z $(aws ec2 describe-instances --filter "Name=tag:Type,Values=$type_tag" --output text | awk '/TAGS\s*Name/ {print$3}' | egrep -o [0-9]* | egrep "^$current_num$") ]]
                 then
                         GEN_NUM=$current_num
-			current_num=$(($current_num-1))
+       			current_num=$(($current_num-1))
                 else
                         current_num=$(($current_num-1))
                 fi
         done
         ec2_host=$(echo $ec2_host | sed "s/RAND/$GEN_NUM/")
-	echo $ec2_host
+       	echo $ec2_host
         aws ec2 create-tags --resources $(curl -s http://169.254.169.254/latest/meta-data/instance-id) --tags Key=Name,Value=$ec2_host
 fi
 
 
 if [[ -z $ec2_host ]]
 then
-	exit 1
+       	exit 1
 fi
 
 if [[ $ec2_host != $current_host ]]
 then
-	hostnamectl set-hostname $ec2_host
+       	hostnamectl set-hostname $ec2_host
+fi
+if [[ -f /etc/init.d/awslogs ]]
+then
+       	/etc/init.d/awslogs stop
+       	/etc/init.d/awslogs start
 fi
 
 /opt/aws-scripts-mon/removealarms.sh
@@ -43,19 +48,19 @@ HOST_NAME=$(uname -n)
 
 if [[ -f /var/tmp/aws-mon/instance-id ]]
 then
-	INSTANCE=$(cat /var/tmp/aws-mon/instance-id)
+       	INSTANCE=$(cat /var/tmp/aws-mon/instance-id)
 else
-	INSTANCE=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+       	INSTANCE=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 fi
 echo "aws ec2 create-tags --resources $INSTANCE --tags Key=Name,Value=$ec2_host_orig" >> /opt/aws-scripts-mon/removealarms.sh
 
 find /opt/aws-scripts-mon/plugins/ -type f -name \*.alarms | while read line
 do
-	plugin=$(echo $line | awk -F/ '{print$5}' | awk -F'.' '{print$1}')
-	if [[ $(eval "echo \$$plugin") -eq 1 ]]
-	then
-		source $line
-	fi
+       	plugin=$(echo $line | awk -F/ '{print$5}' | awk -F'.' '{print$1}')
+       	if [[ $(eval "echo \$$plugin") -eq 1 ]]
+       	then
+       		source $line
+       	fi
 done
 
 echo 'touch /opt/aws-scripts-mon/monitor.lockfile' >> /opt/aws-scripts-mon/removealarms.sh
