@@ -3,12 +3,12 @@
 source /opt/aws-scripts-mon/cron/.config
 rm -fr /var/tmp/aws-mon
 sleep 60
-ec2_host=$(aws ec2 describe-tags --filter "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"  "Name=key,Values=Name" | grep Value | awk -F'"' '{print$4}')
+ec2_host=$(aws ec2 describe-tags --filter "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"  "Name=key,Values=Name" --output json | grep Value | awk -F'"' '{print$4}')
 ec2_host_orig=$ec2_host
 current_host=$(uname -n)
 if [[ ! -z $(echo $ec2_host | grep RAND) ]]
 then
-        type_tag=$(aws ec2 describe-tags --filter "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"  "Name=key,Values=Type"  | awk -F'"' '/Value/ {print$4}')
+        type_tag=$(aws ec2 describe-tags --filter "Name=resource-id,Values=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)"  "Name=key,Values=Type" --output json | awk -F'"' '/Value/ {print$4}')
         current_num=$(aws ec2 describe-instances --filter "Name=tag:Type,Values=$type_tag" --output text | awk '/TAGS\s*Name/ {print$3}' | wc -l)
         while [[ $current_num -gt 0 ]]
         do
