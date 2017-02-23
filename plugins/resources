@@ -12,3 +12,5 @@ memtotal=$(awk '/MemTotal/ {print$2}' /proc/meminfo)
 memfree=$(awk '/MemAvailable/ {print$2}' /proc/meminfo)
 let "memused=100-memfree*100/memtotal"
 aws cloudwatch put-metric-data --metric-name UsedMemoryPercent --namespace System/Linux --value $memused --dimensions Server=$HOST_NAME --unit Percent
+
+aws cloudwatch put-metric-data --metric-name CPUUtilization --namespace System/Linux --dimensions Server=$HOST_NAME --value $((100-$(mpstat 1 1 | egrep -v "Average|CPU" | tail -1 |  awk -F'[ |.]+' '{print $22}'))) --unit Percent
