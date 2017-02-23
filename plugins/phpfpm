@@ -1,4 +1,0 @@
-#!/bin/bash
-
-
-aws cloudwatch put-metric-data --metric-name PHP-FPM --namespace Processes --value $(ps aux | grep -c php-fp[m])

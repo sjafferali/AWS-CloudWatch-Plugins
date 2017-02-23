@@ -1,9 +1,0 @@
-#!/bin/bash
-
-
-### PHPFPM ALARMS
-aws cloudwatch put-metric-alarm --alarm-name PHPFPMConnections-$HOST_NAME --alarm-description "Alarm when php-fpm connections exceeds 150" --metric-name PHP-FPM --namespace Processes --statistic Average --period 60 --threshold 50 --comparison-operator GreaterThanThreshold --evaluation-periods 10 --alarm-actions $sns_topic
-aws cloudwatch put-metric-alarm --alarm-name PHPFPMProcesses-$HOST_NAME --alarm-description "Alarm when no php-fpm processes running" --metric-name PHP-FPM --namespace Processes --statistic Average --period 60 --threshold 1 --comparison-operator LessThanThreshold --evaluation-periods 10 --alarm-actions $sns_topic
-
-echo "aws cloudwatch delete-alarms --alarm-names PHPFPMConnections-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
-echo "aws cloudwatch delete-alarms --alarm-names PHPFPMProcesses-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
