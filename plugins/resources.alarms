@@ -34,5 +34,3 @@ done
 echo "aws cloudwatch delete-alarms --alarm-names CPU-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
 echo "aws cloudwatch delete-alarms --alarm-names Load-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
 echo "aws cloudwatch delete-alarms --alarm-names IOWait-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
-echo "aws cloudwatch delete-alarms --alarm-names StatusCheckFailed_Instance-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
-echo "aws cloudwatch delete-alarms --alarm-names StatusCheckFailed_System-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
