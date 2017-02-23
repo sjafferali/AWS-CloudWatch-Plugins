@@ -10,8 +10,9 @@ df -Ph | egrep "^/dev/" | grep -v "/san" | while read line
 do
 	aws cloudwatch put-metric-alarm --alarm-name Disk-$HOST_NAME-$(echo $line | awk '{print$6}') --alarm-description "Alarm when disk exceeds 80%" --metric-name DiskSpaceUtilization  --namespace System/Linux --statistic Average --period 60 --threshold 80 --comparison-operator GreaterThanThreshold --dimensions  Name=Filesystem,Value=$(echo $line | awk '{print$1}') Name=MountPath,Value=$(echo $line | awk '{print$6}') Name=InstanceId,Value=$INSTANCE --evaluation-periods 20 --alarm-actions $sns_topic --unit Percent
 done
+
 ### CPU ALARM
-aws cloudwatch put-metric-alarm --alarm-name CPU-$HOST_NAME --alarm-description "Alarm when CPU exceeds 80%" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 300 --threshold 80 --comparison-operator GreaterThanThreshold  --evaluation-periods 4 --alarm-actions $sns_topic --unit Percent
+aws cloudwatch put-metric-alarm --alarm-name CPU-$HOST_NAME --alarm-description "Alarm when CPU exceeds 80%" --metric-name CPUUtilization --namespace System/Linux --statistic Average --period 300 --threshold 80 --comparison-operator GreaterThanThreshold  --evaluation-periods 4 --alarm-actions $sns_topic --unit Percent
 
 ### LOAD ALARM
 aws cloudwatch put-metric-alarm --alarm-name Load-$HOST_NAME --alarm-description "Alarm when load exceeds $NUM_CORES" --metric-name Load --namespace System/Linux --statistic Average --period 60 --threshold $NUM_CORES --comparison-operator GreaterThanThreshold --evaluation-periods 10 --alarm-actions $sns_topic
