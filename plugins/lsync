@@ -1,4 +1,4 @@
 #!/bin/bash
 
 
-aws cloudwatch put-metric-data --metric-name Lsync --dimensions InstanceId=$INSTANCE --namespace Processes --value $(ps aux | grep -c lsyn[c])
+aws cloudwatch put-metric-data --metric-name Lsync  --namespace Processes --value $(ps aux | grep -c lsyn[c])

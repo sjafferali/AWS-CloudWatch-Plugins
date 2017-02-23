@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ### MYSQL ALARM
-aws cloudwatch put-metric-alarm --alarm-name MySQLConnections-$HOST_NAME --alarm-description "Alarm when mysql connections exceeds 150" --metric-name Connections --namespace MySQL --statistic Average --period 60 --threshold 150 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 5 --alarm-actions $sns_topic
-aws cloudwatch put-metric-alarm --alarm-name MySQLProcesses-$HOST_NAME --alarm-description "Alarm when no mysql processes running" --metric-name MySQL --namespace Processes --statistic Average --period 60 --threshold 1 --comparison-operator LessThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 10 --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name MySQLConnections-$HOST_NAME --alarm-description "Alarm when mysql connections exceeds 150" --metric-name Connections --namespace MySQL --statistic Average --period 60 --threshold 150 --comparison-operator GreaterThanThreshold --evaluation-periods 5 --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name MySQLProcesses-$HOST_NAME --alarm-description "Alarm when no mysql processes running" --metric-name MySQL --namespace Processes --statistic Average --period 60 --threshold 1 --comparison-operator LessThanThreshold --evaluation-periods 10 --alarm-actions $sns_topic
 
 
 echo "aws cloudwatch delete-alarms --alarm-names MySQLConnections-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh

@@ -1,6 +1,6 @@
 #!/bin/bash
 
 
-aws cloudwatch put-metric-data --metric-name Connections --dimensions InstanceId=$INSTANCE --namespace Nginx --value $(curl -s localhost/nginx_status | grep Active | awk '{print$3}')
-aws cloudwatch put-metric-data --metric-name Nginx --namespace Processes --dimensions InstanceId=$INSTANCE --value $(ps aux | grep -c ngin[x]:)
+aws cloudwatch put-metric-data --metric-name Connections --namespace Nginx --value $(curl -s localhost/nginx_status | grep Active | awk '{print$3}')
+aws cloudwatch put-metric-data --metric-name Nginx --namespace Processes --value $(ps aux | grep -c ngin[x]:)
 

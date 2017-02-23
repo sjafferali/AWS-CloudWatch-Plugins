@@ -1,5 +1,5 @@
 #!/bin/bash
 
 
-aws cloudwatch put-metric-data --metric-name Connections --namespace MySQL --dimensions InstanceId=$INSTANCE --value $(mysql -Ne "show status like 'Threads_connected'"  | awk '{print$2}')
-aws cloudwatch put-metric-data --metric-name MySQL --dimensions InstanceId=$INSTANCE --namespace Processes --value $(ps aux | grep -c mysq[l])
+aws cloudwatch put-metric-data --metric-name Connections --namespace MySQL --value $(mysql -Ne "show status like 'Threads_connected'"  | awk '{print$2}')
+aws cloudwatch put-metric-data --metric-name MySQL --namespace Processes --value $(ps aux | grep -c mysq[l])
