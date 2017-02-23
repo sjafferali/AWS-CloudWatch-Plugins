@@ -5,8 +5,7 @@ source /opt/aws-scripts-mon/cron/.config
 
 echo '#!/bin/bash' > /opt/aws-scripts-mon/removealarms.sh
 
-HOST_NAME=$(uname -n)
-
+HOST_NAME=$(hostname -s)
 
 find /opt/aws-scripts-mon/plugins/ -type f -name \*.alarms | while read line
 do
