@@ -2,6 +2,6 @@
 
 
 ### LSYNC ALARM
-aws cloudwatch put-metric-alarm --alarm-name LsyncProcesses-$HOST_NAME --alarm-description "Alarm when no lsync processes running" --metric-name Lsync --namespace Processes --statistic Average --period 300 --threshold 1 --comparison-operator LessThanThreshold --evaluation-periods 2 --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name LsyncProcesses-$HOST_NAME --alarm-description "Alarm when no lsync processes running" --metric-name Lsync --namespace Processes --statistic Average --period 300 --threshold 1 --comparison-operator LessThanThreshold --evaluation-periods 2 --alarm-actions $sns_topic --dimensions Name=Server,Value=$HOST_NAME
 
 echo "aws cloudwatch delete-alarms --alarm-names LsyncProcesses-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
