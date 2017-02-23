@@ -2,13 +2,13 @@
 
 if [[ -z $(/usr/sbin/crm_mon --simple-status | grep WARN) ]]
 then
-       	aws cloudwatch put-metric-data --metric-name ClusterStatus --namespace HCluster --value 0
+       	aws cloudwatch put-metric-data --metric-name ClusterStatus --namespace HCluster --value 0 --dimensions Server=$HOST_NAME
 else
-       	aws cloudwatch put-metric-data --metric-name ClusterStatus --namespace HCluster --value 1
+       	aws cloudwatch put-metric-data --metric-name ClusterStatus --namespace HCluster --value 1 --dimensions Server=$HOST_NAME
 fi
 
-#aws cloudwatch put-metric-data --metric-name ClusterFailures --namespace HCluster --value $(crm_mon -1 | egrep -c "^\*")
+#aws cloudwatch put-metric-data --metric-name ClusterFailures --namespace HCluster --value $(crm_mon -1 | egrep -c "^\*") --dimensions Server=$HOST_NAME
 
-aws cloudwatch put-metric-data --metric-name Corosync --namespace Processes --value $(ps aux | grep -c [c]orosync)
-aws cloudwatch put-metric-data --metric-name Pacemaker --namespace Processes --value $(ps aux | grep -c [p]acemakerd)
-aws cloudwatch put-metric-data --metric-name PCSD --namespace Processes --value $(ps aux | grep -c pcs[d])
+aws cloudwatch put-metric-data --metric-name Corosync --namespace Processes --value $(ps aux | grep -c [c]orosync) --dimensions Server=$HOST_NAME
+aws cloudwatch put-metric-data --metric-name Pacemaker --namespace Processes --value $(ps aux | grep -c [p]acemakerd) --dimensions Server=$HOST_NAME
+aws cloudwatch put-metric-data --metric-name PCSD --namespace Processes --value $(ps aux | grep -c pcs[d]) --dimensions Server=$HOST_NAME

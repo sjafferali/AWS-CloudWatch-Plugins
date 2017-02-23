@@ -1,22 +1,22 @@
 #!/bin/bash
 
 
-aws cloudwatch put-metric-data --metric-name ReplicationLag --namespace MySQL --value $(mysql -e "show slave status\G" | grep Seconds | awk '{print$2}')
+aws cloudwatch put-metric-data --metric-name ReplicationLag --namespace MySQL --value $(mysql -e "show slave status\G" | grep Seconds | awk '{print$2}') --dimensions Server=$HOST_NAME
 if [[ $(mysql -e "show slave status\G" | grep Last_SQL_Errno | awk '{print$2}') -eq 0 ]]
 then
-	aws cloudwatch put-metric-data --metric-name ReplicationError --namespace MySQL --value 0
+	aws cloudwatch put-metric-data --metric-name ReplicationError --namespace MySQL --value 0 --dimensions Server=$HOST_NAME
 else
-	aws cloudwatch put-metric-data --metric-name ReplicationError --namespace MySQL --value 1
+	aws cloudwatch put-metric-data --metric-name ReplicationError --namespace MySQL --value 1 --dimensions Server=$HOST_NAME
 fi
 if [[ $(mysql -e "show slave status\G" | grep Slave_SQL_Running: | awk '{print$2}') == "Yes" ]]
 then
-	aws cloudwatch put-metric-data --metric-name Slave_SQL_Running --namespace MySQL --value 1
+	aws cloudwatch put-metric-data --metric-name Slave_SQL_Running --namespace MySQL --value 1 --dimensions Server=$HOST_NAME
 else
-	aws cloudwatch put-metric-data --metric-name Slave_SQL_Running --namespace MySQL --value 0
+	aws cloudwatch put-metric-data --metric-name Slave_SQL_Running --namespace MySQL --value 0 --dimensions Server=$HOST_NAME
 fi
 if [[ $(mysql -e "show slave status\G" | grep Slave_IO_Running: | awk '{print$2}') == "Yes" ]]
 then
-	aws cloudwatch put-metric-data --metric-name Slave_IO_Running --namespace MySQL --value 1
+	aws cloudwatch put-metric-data --metric-name Slave_IO_Running --namespace MySQL --value 1 --dimensions Server=$HOST_NAME
 else
-	aws cloudwatch put-metric-data --metric-name Slave_IO_Running --namespace MySQL --value 0
+	aws cloudwatch put-metric-data --metric-name Slave_IO_Running --namespace MySQL --value 0 --dimensions Server=$HOST_NAME
 fi
