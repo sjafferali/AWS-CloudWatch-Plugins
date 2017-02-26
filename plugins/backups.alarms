@@ -4,6 +4,8 @@ aws cloudwatch put-metric-alarm --alarm-name HollandErrors-$HOST_NAME --alarm-de
 
 aws cloudwatch put-metric-alarm --alarm-name RsyncErrors-$HOST_NAME --alarm-description "Rsync backup errors detected" --metric-name RsyncErrors --namespace Backups --statistic Maximum --period 60 --threshold 1 --comparison-operator GreaterThanOrEqualToThreshold --evaluation-periods 5 --alarm-actions $sns_topic --dimensions Name=Server,Value=$HOST_NAME
 
+aws cloudwatch put-metric-alarm --alarm-name TimeSinceLastRsync-$HOST_NAME --alarm-description "Over 2 days since last rsync backup" --metric-name TimeSinceLastRsync --namespace Backups --statistic Maximum --period 60 --threshold 172800 --comparison-operator GreaterThanOrEqualToThreshold --evaluation-periods 5 --alarm-actions $sns_topic --dimensions Name=Server,Value=$HOST_NAME
 
 echo "aws cloudwatch delete-alarms --alarm-names HollandErrors-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
 echo "aws cloudwatch delete-alarms --alarm-names RsyncErrors-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
+echo "aws cloudwatch delete-alarms --alarm-names TimeSinceLastRsync-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh

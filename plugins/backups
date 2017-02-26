@@ -10,3 +10,8 @@ if [[ -f /opt/s-weekly-backup/last_backup_return ]]
 then
     aws cloudwatch put-metric-data --metric-name RsyncErrors --namespace Backups --value $(cat /opt/s-weekly-backup/last_backup_return) --dimensions Server=$HOST_NAME
 fi
+
+if [[ -f /.backup_status ]]
+then
+	aws cloudwatch put-metric-data --metric-name TimeSinceLastRsync --namespace Backups --value $(($(date +%s) - $(date +%s -r /.backup_status))) --dimensions Server=$HOST_NAME
+fi
