@@ -5,4 +5,8 @@
 RETURN=$?
 aws cloudwatch put-metric-data --metric-name HollandErrors --namespace Backups --value $RETURN --dimensions Server=$HOST_NAME
 
-
+# Rsync Metrics
+if [[ -f /opt/s-weekly-backup/last_backup_return ]]
+then
+    aws cloudwatch put-metric-data --metric-name RsyncErrors --namespace Backups --value $(cat /opt/s-weekly-backup/last_backup_return) --dimensions Server=$HOST_NAME
+fi
