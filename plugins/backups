@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Holland Metrics
+/usr/bin/python /opt/aws-scripts-mon/scripts/holland/mysqldump.py >> /opt/aws-scripts-mon/scripts/logs/holland_monitor_log
+RETURN=$?
+aws cloudwatch put-metric-data --metric-name HollandErrors --namespace Backups --value $RETURN --dimensions Server=$HOST_NAME
+
+
