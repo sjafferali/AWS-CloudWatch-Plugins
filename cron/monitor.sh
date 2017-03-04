@@ -11,8 +11,13 @@ HOST_NAME=$(hostname -s)
 find /opt/aws-scripts-mon/plugins/ -type f ! -name \*.alarms | while read line
 do
 	plugin=$(echo $line | awk -F/ '{print$5}')
-	if [[ $(eval "echo \$$plugin") -eq 1 ]]
+        INTERVAL=$(eval "echo \$$plugin")
+	if [[ $INTERVAL -ge 1 ]]
 	then
-		source $line
+		if [[ ! -f /opt/aws-scripts-mon/.schedule/$plugin || $(stat --format=%Y /opt/aws-scripts-mon/.schedule/$plugin) -le $(( $(date +%s) - $INTERVAL )) ]]
+		then
+			source $line
+			touch /opt/aws-scripts-mon/.schedule/$plugin
+		fi
 	fi
 done
