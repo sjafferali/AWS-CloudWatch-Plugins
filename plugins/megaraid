@@ -1,0 +1,20 @@
+#!/bin/bash
+
+RAID_STATUS="0"
+
+STATUS=$(megacli -CfgDsply -aALL -nolog |grep '^State' |awk '{print $3}')
+if [ "$STATUS" != "Optimal" ]; then
+	RAID_STATUS="1"
+fi
+
+STATUS=$(megacli -AdpAllInfo -aALL -NoLog|egrep '^  (Degraded|Failed)' | grep -vc ' 0')
+if [[ $STATUS -ne 0 ]]; then
+	RAID_STATUS="1"
+fi
+
+STATUS=$(megacli -CfgDsply -aALL -nolog | grep S.M.A.R.T | grep -vc ': No')
+if [[ $STATUS -ne 0 ]]; then
+        RAID_STATUS="1"
+fi
+
+aws cloudwatch put-metric-data --metric-name RaidStatus --dimensions Server=$HOST_NAME --namespace Raid --value $RAID_STATUS
