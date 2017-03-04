@@ -2,7 +2,7 @@
 
 df -Ph | egrep "^/dev/" | grep -v "/san" | while read line
 do
-        aws cloudwatch put-metric-data --metric-name DiskSpaceUtilization --namespace System/Linux --dimensions Server=$HOST_NAME MountPath=$(echo $line | awk '{print$6}') --unit Percent --value $(echo $line | awk -F"[ |%]+" '{print$5}')
+        aws cloudwatch put-metric-data --metric-name DiskSpaceUtilization --namespace System/Linux --dimensions Server=$HOST_NAME,MountPath=$(echo $line | awk '{print$6}') --unit Percent --value $(echo $line | awk -F"[ |%]+" '{print$5}')
 done
 
 aws cloudwatch put-metric-data --metric-name Load --namespace System/Linux --value $(cat /proc/loadavg  | awk '{print$1}') --dimensions Server=$HOST_NAME
