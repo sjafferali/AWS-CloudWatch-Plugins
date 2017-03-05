@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+### HTTPD ALARM
+aws cloudwatch put-metric-alarm --alarm-name IdleWorker-$HOST_NAME --alarm-description "Alarm when no idle workers" --metric-name IdleWorker --namespace HTTPD --statistic Average --period $INTERVAL --threshold 1 --comparison-operator LessThanThreshold --evaluation-periods 5 --alarm-actions $sns_topic --dimensions Name=Server,Value=$HOST_NAME
+
+aws cloudwatch put-metric-alarm --alarm-name HttpdProcesses-$HOST_NAME --alarm-description "Alarm when no http processes running" --metric-name HTTPD --namespace Processes --statistic Average --period $INTERVAL --threshold 1 --comparison-operator LessThanThreshold --evaluation-periods 10 --alarm-actions $sns_topic --dimensions Name=Server,Value=$HOST_NAME
+
+echo "aws cloudwatch delete-alarms --alarm-names IdleWorker-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
+echo "aws cloudwatch delete-alarms --alarm-names HttpdProcesses-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh

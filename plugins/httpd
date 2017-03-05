@@ -1,0 +1,10 @@
+#!/bin/bash
+
+BUSYWORKERS=$(wget -q -O - http://localhost/server-status?auto | grep BusyWorkers | awk '{ print $2 }')
+IDLEWORKERS=$(wget -q -O - http://localhost/server-status?auto | grep IdleWorkers | awk '{ print $2 }')
+
+aws cloudwatch put-metric-data --metric-name "BusyWorkers" --unit Count --value $BUSYWORKERS --dimensions Server=$HOST_NAME --namespace HTTPD
+
+aws cloudwatch put-metric-data --metric-name "IdleWorker" --unit Count --value $IDLEWORKERS --dimensions Server=$HOST_NAME --namespace HTTPD
+
+aws cloudwatch put-metric-data --metric-name HTTPD --namespace Processes --value $(ps aux | grep -c http[d]) --dimensions Server=$HOST_NAME
