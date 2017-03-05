@@ -1,6 +1,20 @@
 #!/bin/bash
 
+ACTIVE_CONNECTIONS=$(curl -s http://localhost:8000/nginx_status | awk '/Active/ {print$3}')
+STATS=$(curl -s http://localhost:8000/nginx_status | egrep "^ [0-9]")
+ACCEPTED_CONNECTIONS=$(echo $STATS | awk '{print$1}')
+HANDLED_CONNECTIONS=$(echo $STATS | awk '{print$2}')
+REQUESTS=$(echo $STATS | awk '{print$3}')
+STATS=$(curl -s http://localhost:8000/nginx_status  | grep Reading)
+READING=$(echo $STATS | awk '{print$2}')
+WRITING=$(echo $STATS | awk '{print$4}')
+WAITING=$(echo $STATS | awk '{print$6}')
 
-aws cloudwatch put-metric-data --metric-name Connections --namespace Nginx --value $(curl -s localhost/nginx_status | grep Active | awk '{print$3}') --dimensions Server=$HOST_NAME
+aws cloudwatch put-metric-data --metric-name ActiveConnections --namespace Nginx --value $ACTIVE_CONNECTIONS --dimensions Server=$HOST_NAME
+aws cloudwatch put-metric-data --metric-name AcceptedConnections --namespace Nginx --value $ACCEPTED_CONNECTIONS --dimensions Server=$HOST_NAME
+aws cloudwatch put-metric-data --metric-name HandledConnections --namespace Nginx --value $HANDLED_CONNECTIONS --dimensions Server=$HOST_NAME
+aws cloudwatch put-metric-data --metric-name Requests --namespace Nginx --value $REQUESTS --dimensions Server=$HOST_NAME
+aws cloudwatch put-metric-data --metric-name ConnectionReading --namespace Nginx --value $READING --dimensions Server=$HOST_NAME
+aws cloudwatch put-metric-data --metric-name ConnectionWriting --namespace Nginx --value $WRITING --dimensions Server=$HOST_NAME
+aws cloudwatch put-metric-data --metric-name ConnectionWaiting --namespace Nginx --value $WAITING --dimensions Server=$HOST_NAME
 aws cloudwatch put-metric-data --metric-name Nginx --namespace Processes --value $(ps aux | grep -c ngin[x]:) --dimensions Server=$HOST_NAME
-
