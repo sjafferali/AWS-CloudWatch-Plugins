@@ -5,6 +5,11 @@ do
         aws cloudwatch put-metric-data --metric-name DiskSpaceUtilization --namespace System/Linux --dimensions Server=$HOST_NAME,MountPath=$(echo $line | awk '{print$6}') --unit Percent --value $(echo $line | awk -F"[ |%]+" '{print$5}')
 done
 
+df -Pi | egrep "^/dev/" | grep -v "/san" | while read line
+do
+	aws cloudwatch put-metric-data --metric-name InodeUtilization --namespace System/Linux --dimensions Server=$HOST_NAME,MountPath=$(echo $line | awk '{print$6}') --unit Percent --value $(echo $line | awk -F"[ |%]+" '{print$5}')
+done
+
 aws cloudwatch put-metric-data --metric-name Load --namespace System/Linux --value $(cat /proc/loadavg  | awk '{print$1}') --dimensions Server=$HOST_NAME
 aws cloudwatch put-metric-data --metric-name IOWait --namespace System/Linux --value $(iostat 1 2 | grep -A1 avg-cpu | tail -1 | awk '{print$4}') --unit Percent --dimensions Server=$HOST_NAME
 

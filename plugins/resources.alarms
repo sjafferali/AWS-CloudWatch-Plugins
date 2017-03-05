@@ -11,6 +11,11 @@ do
 	aws cloudwatch put-metric-alarm --alarm-name Disk-$HOST_NAME-$(echo $line | awk '{print$6}') --alarm-description "Alarm when disk exceeds 80%" --metric-name DiskSpaceUtilization  --namespace System/Linux --statistic Average --period $INTERVAL --threshold 80 --comparison-operator GreaterThanThreshold --dimensions Name=MountPath,Value=$(echo $line | awk '{print$6}') Name=Server,Value=$HOST_NAME --evaluation-periods 20 --alarm-actions $sns_topic --unit Percent
 done
 
+df -Pi | egrep "^/dev/" | grep -v "/san" | while read line
+do
+        aws cloudwatch put-metric-alarm --alarm-name InodeUsage-$HOST_NAME-$(echo $line | awk '{print$6}') --alarm-description "Alarm when inode usage exceeds 80%" --metric-name InodeUtilization  --namespace System/Linux --statistic Average --period $INTERVAL --threshold 80 --comparison-operator GreaterThanThreshold --dimensions Name=MountPath,Value=$(echo $line | awk '{print$6}') Name=Server,Value=$HOST_NAME --evaluation-periods 20 --alarm-actions $sns_topic --unit Percent
+done
+
 ### CPU ALARM
 aws cloudwatch put-metric-alarm --alarm-name CPU-$HOST_NAME --alarm-description "Alarm when CPU exceeds 80%" --metric-name CPUUtilization --namespace System/Linux --statistic Average --period 300 --threshold 80 --comparison-operator GreaterThanThreshold --dimensions Name=Server,Value=$HOST_NAME --evaluation-periods 4 --alarm-actions $sns_topic --unit Percent
 
@@ -25,6 +30,7 @@ echo "aws cloudwatch delete-alarms --alarm-names RAM-$HOST_NAME" >> /opt/aws-scr
 df -Ph | egrep "^/dev/" | grep -v "/san" | while read line
 do
 	echo "aws cloudwatch delete-alarms --alarm-names Disk-$HOST_NAME-$(echo $line | awk '{print$6}')" >> /opt/aws-scripts-mon/removealarms.sh
+	echo "aws cloudwatch delete-alarms --alarm-names InodeUsage-$HOST_NAME-$(echo $line | awk '{print$6}')" >> /opt/aws-scripts-mon/removealarms.sh
 done
 
 echo "aws cloudwatch delete-alarms --alarm-names CPU-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
