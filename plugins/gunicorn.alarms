@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+### GUNICORN ALARM
+aws cloudwatch put-metric-alarm --alarm-name GunicornProcesses-$HOST_NAME --alarm-description "Alarm when no gunicorn processes running" --metric-name Gunicorn --namespace Processes --statistic Average --period $INTERVAL --threshold 1 --comparison-operator LessThanThreshold --evaluation-periods 5 --alarm-actions $sns_topic --dimensions Name=Server,Value=$HOST_NAME
+
+echo "aws cloudwatch delete-alarms --alarm-names GunicornProcesses-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
