@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+aws cloudwatch put-metric-data --metric-name Lsync --dimensions Server=$HOST_NAME --namespace PackageUpdates --value $(yum check-update | awk '$2 ~ /^[0-9]/ {count[$3] += 1;total += 1;} END { printf("%d\n", total);}')
+
+LAST_KERNEL=$(rpm -q --last kernel | perl -pe 's/^kernel-(\S+).*/$1/' | head -1)
+CURRENT_KERNEL=$(uname -r)
+
+if [ $LAST_KERNEL = $CURRENT_KERNEL ]; then
+	aws cloudwatch put-metric-data --metric-name RebootNeeded --dimensions Server=$HOST_NAME --namespace PackageUpdates --value 1
+else
+	aws cloudwatch put-metric-data --metric-name RebootNeeded --dimensions Server=$HOST_NAME --namespace PackageUpdates --value 0
+fi
