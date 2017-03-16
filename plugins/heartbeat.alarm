@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+### HEARTBEAT ALARM
+aws cloudwatch put-metric-alarm --alarm-name Heartbeat-$HOST_NAME --alarm-description "Alarm when no heartbeat pings received" --metric-name Heartbeat --namespace Heartbeat --statistic Average --period 120 --threshold 1 --comparison-operator LessThanThreshold --evaluation-periods 1 --alarm-actions $sns_topic --dimensions Name=Server,Value=$HOST_NAME
+
+echo "aws cloudwatch delete-alarms --alarm-names Heartbeat-$HOST_NAME" > /opt/aws-scripts-mon/removeheartbeat.sh
+chmod 700 /opt/aws-scripts-mon/removeheartbeat.sh
