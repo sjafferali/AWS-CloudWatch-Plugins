@@ -1,0 +1,1 @@
+aws cloudwatch put-metric-data --metric-name Heartbeat --dimensions Server=$HOST_NAME --namespace Heartbeat --value 1
