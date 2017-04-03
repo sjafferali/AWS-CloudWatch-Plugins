@@ -23,8 +23,9 @@ aws cloudwatch put-metric-alarm --alarm-name CPU-$HOST_NAME --alarm-description 
 aws cloudwatch put-metric-alarm --alarm-name Load-$HOST_NAME --alarm-description "Alarm when load exceeds $NUM_CORES" --metric-name Load --namespace System/Linux --statistic Average --period $INTERVAL --threshold $NUM_CORES --comparison-operator GreaterThanThreshold --evaluation-periods 10 --dimensions Name=Server,Value=$HOST_NAME --alarm-actions $sns_topic
 
 ### IOWAIT ALARM
+if [[ -z $(echo $HOST_NAME | grep backup) ]] ; then
 aws cloudwatch put-metric-alarm --alarm-name IOWait-$HOST_NAME --alarm-description "Alarm when iowait exceeds 35%" --metric-name IOWait  --namespace System/Linux --statistic Average --period $INTERVAL --threshold 35 --comparison-operator GreaterThanThreshold --dimensions Name=Server,Value=$HOST_NAME --evaluation-periods 10 --alarm-actions $sns_topic --unit Percent
-
+fi
 
 echo "aws cloudwatch delete-alarms --alarm-names RAM-$HOST_NAME" >> /opt/aws-scripts-mon/removealarms.sh
 df -Ph | egrep "^/dev/" | grep -v "/san" | while read line
