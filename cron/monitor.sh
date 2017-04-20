@@ -6,7 +6,7 @@ then
 fi
 
 source /opt/aws-scripts-mon/cron/.config
-HOST_NAME=$(hostname -s)
+HOST_NAME=$(uname -n)
 
 find /opt/aws-scripts-mon/plugins/ -type f ! -name \*.alarms | while read line
 do
