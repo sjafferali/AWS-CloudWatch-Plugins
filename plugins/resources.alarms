@@ -14,7 +14,7 @@ done
 aws cloudwatch put-metric-alarm --alarm-name CPU-$HOST_NAME --alarm-description "Alarm when CPU exceeds 80%" --metric-name CPUUtilization --namespace AWS/EC2 --statistic Average --period 300 --threshold 80 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE  --evaluation-periods 4 --alarm-actions $sns_topic --unit Percent
 
 ### LOAD ALARM
-aws cloudwatch put-metric-alarm --alarm-name Load-$HOST_NAME --alarm-description "Alarm when load exceeds $NUM_CORES" --metric-name LoadAvgPerCPU1Min --namespace System/Linux --statistic Average --period 60 --threshold $NUM_CORES --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 10 --alarm-actions $sns_topic
+aws cloudwatch put-metric-alarm --alarm-name Load-$HOST_NAME --alarm-description "Alarm when load exceeds 4" --metric-name LoadAvgPerCPU1Min --namespace System/Linux --statistic Average --period 60 --threshold 4 --comparison-operator GreaterThanThreshold --dimensions Name=InstanceId,Value=$INSTANCE --evaluation-periods 10 --alarm-actions $sns_topic
 
 ### IOWAIT ALARM
 aws cloudwatch put-metric-alarm --alarm-name IOWait-$HOST_NAME --alarm-description "Alarm when iowait exceeds 35%" --metric-name IOWait  --namespace System/Linux --statistic Average --period 60 --threshold 35 --comparison-operator GreaterThanThreshold --dimensions  Name=InstanceId,Value=$INSTANCE --evaluation-periods 10 --alarm-actions $sns_topic --unit Percent
