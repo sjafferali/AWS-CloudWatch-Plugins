@@ -1,2 +1,3 @@
 removealarms.sh
 cron/.config
+monitor.lockfile
