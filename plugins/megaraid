@@ -2,8 +2,8 @@
 
 RAID_STATUS="0"
 
-STATUS=$(megacli -CfgDsply -aALL -nolog |grep '^State' |awk '{print $3}')
-if [ "$STATUS" != "Optimal" ]; then
+STATUS=$(megacli -CfgDsply -aALL -nolog |grep '^State' |awk '{print $3}' | grep -cv Optimal)
+if [ $STATUS -ne 0 ]; then
 	RAID_STATUS="1"
 fi
 
