@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This is for https://bugzilla.redhat.com/show_bug.cgi?id=1044666
+NSS_SDB_USE_CACHE=YES
+
 if [[ -f /opt/aws-scripts-mon/monitor.lockfile ]]
 then
 	exit 1
