@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This is for https://bugzilla.redhat.com/show_bug.cgi?id=1044666
+NSS_SDB_USE_CACHE=YES
+
 source /opt/aws-scripts-mon/cron/.config
 touch /opt/aws-scripts-mon/removealarms.sh
 chmod 700 /opt/aws-scripts-mon/removealarms.sh
